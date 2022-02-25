@@ -163,7 +163,22 @@ min(lakes_minmatch$WsAreaSqKm, na.rm=T)
 min(lakes_minmatch$Wshd_area, na.rm=T)
 plotbreaks_wsarea <- seq(-2, 6, 2)
 plotbreaks_wspop <- seq(-10, 6, 4)
-
+plotlims_wsarea <- c(
+  min(min(lakes_minmatch$WsAreaSqKm, na.rm=T),
+      min(lakeatlas_glcptab_join[Wshd_area > -9999, Wshd_area], na.rm=T),
+      min(lakeatlas_glcptab_join$SUB_AREA, na.rm=T)),
+  max(max(lakes_minmatch$WsAreaSqKm, na.rm=T),
+      max(lakeatlas_glcptab_join$Wshd_area, na.rm=T),
+      max(lakeatlas_glcptab_join$SUB_AREA, na.rm=T))
+)
+plotlims_wspop <- c(
+  min(min(1000*lakes_minmatch$pop_ct_usu, na.rm=T),
+      min(lakeatlas_glcptab_join$pop_lakecatWs, na.rm=T),
+      min(lakeatlas_glcptab_join$pop_sum, na.rm=T)),
+  max(max(1000*lakes_minmatch$pop_ct_usu, na.rm=T),
+      max(lakeatlas_glcptab_join$pop_lakecatWs, na.rm=T),
+      max(lakeatlas_glcptab_join$pop_sum, na.rm=T))
+)
 
 areacompare_p_hylaknhd <- ggplot(lakes_minmatch[!is.na(WsAreaSqKm),],
                                  aes(x=log10(Wshd_area), y=log10(WsAreaSqKm))) +
@@ -174,15 +189,19 @@ areacompare_p_hylaknhd <- ggplot(lakes_minmatch[!is.na(WsAreaSqKm),],
                        limits=c(1,45), breaks=c(1,20,40)) +
   scale_x_continuous(name = 'LakeATLAS',
                      breaks = plotbreaks_wsarea,
+                     limits = log10(plotlims_wsarea),
+                     expand=c(0,0),
                      labels = format(10^plotbreaks_wsarea, scientific = T)) +
   scale_y_continuous(name = 'LakeCAT', 
                      breaks=plotbreaks_wsarea,
+                     limits = log10(plotlims_wsarea+0.5),
+                     expand=c(0,0),
                      labels = format(10^plotbreaks_wsarea, scientific = T)) +
   #geom_smooth(method = "lm") +
   #geom_quantile(quantiles=c(0.5)) +
   #scale_x_log10() +
   #scale_y_log10() +
-  #coord_fixed() +
+  coord_fixed() +
   theme_bw() +
   theme(legend.position = 'none', #c(0.15, 0.80),
         legend.background = element_blank(),
@@ -199,15 +218,19 @@ areacompare_p_glcpnhd <- ggplot(lakes_minmatch[!is.na(WsAreaSqKm),],
                        limits=c(1,45), breaks=c(1,20,40)) +
   scale_x_continuous(name = 'GLCP',
                      breaks = plotbreaks_wsarea,
+                     limits = log10(plotlims_wsarea),
+                     expand=c(0,0),
                      labels = format(10^plotbreaks_wsarea, scientific = T)) +
   scale_y_continuous(name = 'LakeCAT', 
                      breaks=plotbreaks_wsarea,
+                     limits = log10(plotlims_wsarea+0.5),
+                     expand=c(0,0),
                      labels = format(10^plotbreaks_wsarea, scientific = T)) +
   #geom_smooth(method = "lm") +
   #geom_quantile(quantiles=c(0.5)) +
   #scale_x_log10() +
   #scale_y_log10() +
-  #coord_fixed() +
+  coord_fixed() +
   theme_bw() +
   theme(legend.position = 'none', #c(0.15, 0.80),
         legend.background = element_blank(),
@@ -225,15 +248,19 @@ areacompare_p_glcphylak <- ggplot(lakeatlas_glcptab_join,
                        limits=c(1,9000), breaks=c(1,10,100,1000,9000)) +
   scale_x_continuous(name = 'GLCP',
                      breaks = plotbreaks_wsarea,
+                     limits = log10(plotlims_wsarea),
+                     expand=c(0,0),
                      labels = format(10^plotbreaks_wsarea, scientific = T)) +
   scale_y_continuous(name = 'LakeATLAS', 
                      breaks=plotbreaks_wsarea,
+                     limits = log10(plotlims_wsarea+0.5),
+                     expand=c(0,0),
                      labels = format(10^plotbreaks_wsarea, scientific = T)) +
   #geom_smooth(method = "lm") +
   #geom_quantile(quantiles=c(0.5)) +
   #scale_x_log10() +
   #scale_y_log10() +
-  #coord_fixed() +
+  coord_fixed() +
   theme_bw() +
   theme(legend.position = 'none', #c(0.15, 0.80),
         legend.background = element_blank(),
@@ -243,7 +270,7 @@ areacompare_p_glcphylak <- ggplot(lakeatlas_glcptab_join,
 
 
 popcompare_p_hylaknhd <- ggplot(lakes_minmatch[!is.na(WsAreaSqKm),],
-                                 aes(x=log10(pop_ct_usu*1000), y=log10(pop_lakecatWs))) +
+                                 aes(x=log10(pop_ct_usu*1000+0.5), y=log10(pop_lakecatWs))) +
   #geom_point(alpha=1/3) +
   geom_abline() +
   stat_bin_hex(bins = 100, alpha=0.9) +
@@ -252,15 +279,19 @@ popcompare_p_hylaknhd <- ggplot(lakes_minmatch[!is.na(WsAreaSqKm),],
                        limits=c(1,17), breaks=c(1,5,10,17)) +
   scale_x_continuous(name = 'LakeATLAS',
                      breaks = plotbreaks_wspop,
+                     limits = log10(plotlims_wspop+0.5),
+                     expand=c(0,0),
                      labels = format(10^plotbreaks_wspop, scientific = T)) +
   scale_y_continuous(name = 'LakeCAT', 
                      breaks=plotbreaks_wspop,
+                     limits = log10(plotlims_wspop+0.5),
+                     expand=c(0,0),
                      labels = format(10^plotbreaks_wspop, scientific = T)) +
   #geom_smooth(method = "lm") +
   #geom_quantile(quantiles=c(0.5)) +
   #scale_x_log10() +
   #scale_y_log10() +
-  #coord_fixed() +
+  coord_fixed() +
   theme_bw() +
   theme(legend.position = 'none', #c(0.15, 0.80),
         legend.background = element_blank(),
@@ -278,15 +309,19 @@ popcompare_p_glcpnhd <- ggplot(lakes_minmatch[!is.na(WsAreaSqKm),],
                        limits=c(1,17), breaks=c(1,17)) +
   scale_x_continuous(name = 'GLCP',
                      breaks = plotbreaks_wspop,
+                     limits = log10(plotlims_wspop+0.5),
+                     expand=c(0,0),
                      labels = format(10^plotbreaks_wspop, scientific = T)) +
   scale_y_continuous(name = 'LakeCAT', 
                      breaks=plotbreaks_wspop,
+                     limits = log10(plotlims_wspop+0.5),
+                     expand=c(0,0),
                      labels = format(10^plotbreaks_wspop, scientific = T)) +
   #geom_smooth(method = "lm") +
   #geom_quantile(quantiles=c(0.5)) +
   #scale_x_log10() +
   #scale_y_log10() +
-  #coord_fixed() +
+  coord_fixed() +
   theme_bw() +
   theme(legend.position = 'none', #c(0.15, 0.80),
         legend.background = element_blank(),
@@ -295,7 +330,7 @@ popcompare_p_glcpnhd <- ggplot(lakes_minmatch[!is.na(WsAreaSqKm),],
         panel.grid.minor = element_blank())
 
 popcompare_p_glcphylak <- ggplot(lakeatlas_glcptab_join,
-                               aes(x=log10(pop_sum), y=log10(1000*pop_ct_usu))) +
+                               aes(x=log10(pop_sum), y=log10(1000*pop_ct_usu)+0.5)) +
   #geom_point(alpha=1/3) +
   geom_abline() +
   stat_bin_hex(bins = 100, alpha=0.9) +
@@ -306,15 +341,19 @@ popcompare_p_glcphylak <- ggplot(lakeatlas_glcptab_join,
                        limits=c(1,5000), breaks=c(1,10,100,1000,5000)) +
   scale_x_continuous(name = 'GLCP',
                      breaks = plotbreaks_wspop,
+                     limits = log10(plotlims_wspop+0.5),
+                     expand=c(0,0),
                      labels = format(10^plotbreaks_wspop, scientific = T)) +
   scale_y_continuous(name = 'LakeATLAS', 
                      breaks=plotbreaks_wspop,
+                     limits = log10(plotlims_wspop+0.5),
+                     expand=c(0,0),
                      labels = format(10^plotbreaks_wspop, scientific = T)) +
   #geom_smooth(method = "lm") +
   #geom_quantile(quantiles=c(0.5)) +
   #scale_x_log10() +
   #scale_y_log10() +
-  #coord_fixed() +
+  coord_fixed() +
   theme_bw() +
   theme(legend.position = 'none', #c(0.15, 0.80),
         legend.background = element_blank(),
@@ -330,7 +369,7 @@ popcompare_p_glcphylak <- ggplot(lakeatlas_glcptab_join,
 #   ) + plot_annotation(tag_levels = 'a')
 # dev.off()
 
-pdf(file.path(figdir, paste0('WshdAreaPopcompareplot_20210815.pdf')),
+pdf(file.path(figdir, paste0('WshdAreaPopcompareplot_20220225.pdf')),
     width = 8, height = 8)
 (((areacompare_p_hylaknhd | areacompare_p_glcpnhd | areacompare_p_glcphylak))/
     ((popcompare_p_hylaknhd | popcompare_p_glcpnhd | popcompare_p_glcphylak))
